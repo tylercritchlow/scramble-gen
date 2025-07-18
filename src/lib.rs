@@ -16,6 +16,8 @@ impl Scramble {
             Cube::ThreeByThree => generate_3x3(length),
             Cube::FourByFour => generate_4x4(length),
             Cube::FiveByFive => generate_5x5(length),
+            Cube::SixBySix => generate_6x6(length),
+            Cube::SevenBySeven => generate_7x7(length),
             _ => unimplemented!(),
         }
     }
@@ -48,13 +50,12 @@ fn generate_4x4(length: Option<usize>) -> Scramble {
     for _ in 0..length.unwrap_or(40) {
         let move_face: MoveFace = rng.gen();
         let move_type: MoveType = rng.gen();
-        
-        // 4x4 uses a mix of single and wide moves, no slice moves
+
         let move_width = match rng.gen_range(0..10) {
-            0..=7 => MoveWidth::Single,  // 80% single moves
-            _ => MoveWidth::Wide,         // 20% wide moves
+            0..=7 => MoveWidth::Single, // 80% single moves
+            _ => MoveWidth::Wide,       // 20% wide moves
         };
-        
+
         let move_ = Move {
             move_face,
             move_type,
@@ -75,13 +76,69 @@ fn generate_5x5(length: Option<usize>) -> Scramble {
     for _ in 0..length.unwrap_or(60) {
         let move_face: MoveFace = rng.gen();
         let move_type: MoveType = rng.gen();
-        
+
         // 5x5 has different move width distribution
         let move_width = match rng.gen_range(0..10) {
-            0..=5 => MoveWidth::Single,  // 60% single moves (R, U, etc.)
-            _ => MoveWidth::Wide,         // 40% wide moves (Rw, Uw, etc.)
+            0..=5 => MoveWidth::Single, // 60% single moves (R, U, etc.)
+            _ => MoveWidth::Wide,       // 40% wide moves (Rw, Uw, etc.)
         };
-        
+
+        let move_ = Move {
+            move_face,
+            move_type,
+            move_width,
+        };
+
+        scramble_moves.push(move_);
+    }
+    Scramble {
+        moves: scramble_moves,
+    }
+}
+
+fn generate_6x6(length: Option<usize>) -> Scramble {
+    let mut scramble_moves = Vec::new();
+    let mut rng = thread_rng();
+
+    for _ in 0..length.unwrap_or(80) {
+        let move_face: MoveFace = rng.gen();
+        let move_type: MoveType = rng.gen();
+
+        // 6x6 uses single, wide, and 3-wide moves
+        let move_width = match rng.gen_range(0..10) {
+            0..=4 => MoveWidth::Single, // 50% single moves
+            5..=7 => MoveWidth::Wide,   // 30% wide moves
+            _ => MoveWidth::ThreeWide,  // 20% 3-wide moves
+        };
+
+        let move_ = Move {
+            move_face,
+            move_type,
+            move_width,
+        };
+
+        scramble_moves.push(move_);
+    }
+    Scramble {
+        moves: scramble_moves,
+    }
+}
+
+fn generate_7x7(length: Option<usize>) -> Scramble {
+    let mut scramble_moves = Vec::new();
+    let mut rng = thread_rng();
+
+    for _ in 0..length.unwrap_or(100) {
+        let move_face: MoveFace = rng.gen();
+        let move_type: MoveType = rng.gen();
+
+        // 7x7 uses all move widths
+        let move_width = match rng.gen_range(0..10) {
+            0..=4 => MoveWidth::Single, // 50% single moves
+            5..=7 => MoveWidth::Wide,   // 30% wide moves
+            _ => MoveWidth::ThreeWide,  // 20% 3-wide moves
+        };
+
         let move_ = Move {
             move_face,
             move_type,
@@ -113,6 +170,7 @@ impl fmt::Display for Move {
         match self.move_width {
             MoveWidth::Single => write!(f, "{}{}", self.move_face, self.move_type),
             MoveWidth::Wide => write!(f, "{}w{}", self.move_face, self.move_type),
+            MoveWidth::ThreeWide => write!(f, "3{}{}", self.move_face, self.move_type),
         }
     }
 }
@@ -181,6 +239,7 @@ impl Distribution<MoveType> for Standard {
 pub enum MoveWidth {
     Single,
     Wide,
+    ThreeWide,
 }
 
 impl Distribution<MoveWidth> for Standard {
@@ -197,6 +256,7 @@ impl fmt::Display for MoveWidth {
         match self {
             MoveWidth::Single => write!(f, ""),
             MoveWidth::Wide => write!(f, "w"),
+            MoveWidth::ThreeWide => write!(f, ""),
         }
     }
 }

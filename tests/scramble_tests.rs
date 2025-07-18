@@ -39,7 +39,7 @@ fn test_4x4_has_various_widths() {
         .moves
         .iter()
         .any(|m| matches!(m.move_width, MoveWidth::Wide));
-    
+
     // With 100 moves, we should have at least some wide moves
     assert!(has_wide);
 }
@@ -59,7 +59,6 @@ fn test_move_display() {
         move_width: MoveWidth::Wide,
     };
     assert_eq!(format!("{}", wide_move), "Rw2");
-
 }
 
 #[test]
@@ -118,8 +117,53 @@ fn test_5x5_has_wide_moves() {
         .moves
         .iter()
         .any(|m| matches!(m.move_width, MoveWidth::Wide));
-    
+
     // 5x5 should have wide moves
     assert!(has_wide);
-    
+}
+
+#[test]
+fn test_6x6_scramble_default_length() {
+    let scramble = Scramble::generate(Cube::SixBySix, None);
+    assert_eq!(scramble.moves.len(), 80);
+}
+
+#[test]
+fn test_6x6_has_three_wide_moves() {
+    let scramble = Scramble::generate(Cube::SixBySix, Some(100));
+    let has_three_wide = scramble
+        .moves
+        .iter()
+        .any(|m| matches!(m.move_width, MoveWidth::ThreeWide));
+
+    // 6x6 should have 3-wide moves
+    assert!(has_three_wide);
+}
+
+#[test]
+fn test_7x7_scramble_default_length() {
+    let scramble = Scramble::generate(Cube::SevenBySeven, None);
+    assert_eq!(scramble.moves.len(), 100);
+}
+
+#[test]
+fn test_7x7_has_three_wide_moves() {
+    let scramble = Scramble::generate(Cube::SevenBySeven, Some(100));
+    let has_three_wide = scramble
+        .moves
+        .iter()
+        .any(|m| matches!(m.move_width, MoveWidth::ThreeWide));
+
+    // 7x7 should have 3-wide moves
+    assert!(has_three_wide);
+}
+
+#[test]
+fn test_three_wide_display() {
+    let three_wide_move = Move {
+        move_face: MoveFace::Right,
+        move_type: MoveType::Prime,
+        move_width: MoveWidth::ThreeWide,
+    };
+    assert_eq!(format!("{}", three_wide_move), "3R'");
 }
