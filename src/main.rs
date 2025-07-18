@@ -1,13 +1,13 @@
+use scramble_gen::{Cube, Scramble};
 use std::env;
-use scramble_gen::{Scramble, Cube};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    
+
     let mut cube_type = Cube::ThreeByThree;
     let mut length: Option<usize> = None;
     let mut amount = 1;
-    
+
     for arg in &args[1..] {
         match arg.as_str() {
             "--3x3" => cube_type = Cube::ThreeByThree,
@@ -29,8 +29,8 @@ fn main() {
             _ => {}
         }
     }
-    
-    for i in 0..amount {
+
+    for _ in 0..amount {
         let scramble = Scramble::generate(cube_type, length);
         println!("{}", scramble);
     }

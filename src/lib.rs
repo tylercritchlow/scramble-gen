@@ -1,8 +1,8 @@
-use std::cmp::PartialEq;
 use rand::{
     distributions::{Distribution, Standard},
     thread_rng, Rng,
 };
+use std::cmp::PartialEq;
 use std::fmt;
 
 #[derive(Debug)]
@@ -12,9 +12,9 @@ pub struct Scramble {
 
 impl Scramble {
     pub fn generate(cube: Cube, length: Option<usize>) -> Scramble {
-        match cube { 
-            Cube::ThreeByThree => { generate_3x3(length) }
-            Cube::FourByFour => { generate_4x4(length) }
+        match cube {
+            Cube::ThreeByThree => generate_3x3(length),
+            Cube::FourByFour => generate_4x4(length),
             _ => unimplemented!(),
         }
     }
@@ -24,7 +24,7 @@ fn generate_3x3(length: Option<usize>) -> Scramble {
     let mut scramble_moves = Vec::new();
     let mut rng = thread_rng();
 
-    for i in 0..length.unwrap_or(20) {
+    for _ in 0..length.unwrap_or(20) {
         let move_face: MoveFace = rng.gen();
         let move_type: MoveType = rng.gen();
         let move_ = Move {
@@ -44,7 +44,7 @@ fn generate_4x4(length: Option<usize>) -> Scramble {
     let mut scramble_moves = Vec::new();
     let mut rng = thread_rng();
 
-    for i in 0..length.unwrap_or(40) {
+    for _ in 0..length.unwrap_or(40) {
         let move_face: MoveFace = rng.gen();
         let move_type: MoveType = rng.gen();
         let move_width: MoveWidth = rng.gen();
@@ -77,7 +77,13 @@ pub struct Move {
 impl fmt::Display for Move {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.move_width {
-            MoveWidth::Slice => write!(f, "{}{}{}", self.move_face.to_string().to_lowercase(), self.move_width, self.move_type),
+            MoveWidth::Slice => write!(
+                f,
+                "{}{}{}",
+                self.move_face.to_string().to_lowercase(),
+                self.move_width,
+                self.move_type
+            ),
             _ => write!(f, "{}{}{}", self.move_face, self.move_width, self.move_type),
         }
     }
