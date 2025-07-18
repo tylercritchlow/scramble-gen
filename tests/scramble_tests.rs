@@ -39,13 +39,9 @@ fn test_4x4_has_various_widths() {
         .moves
         .iter()
         .any(|m| matches!(m.move_width, MoveWidth::Wide));
-    let has_slice = scramble
-        .moves
-        .iter()
-        .any(|m| matches!(m.move_width, MoveWidth::Slice));
-
-    // With 100 moves, we should have at least some wide and slice moves
-    assert!(has_wide || has_slice);
+    
+    // With 100 moves, we should have at least some wide moves
+    assert!(has_wide);
 }
 
 #[test]
@@ -64,12 +60,6 @@ fn test_move_display() {
     };
     assert_eq!(format!("{}", wide_move), "Rw2");
 
-    let slice_move = Move {
-        move_face: MoveFace::Right,
-        move_type: MoveType::Normal,
-        move_width: MoveWidth::Slice,
-    };
-    assert_eq!(format!("{}", slice_move), "r");
 }
 
 #[test]
@@ -107,4 +97,29 @@ fn test_scramble_display() {
     let output = format!("{}", scramble);
     assert!(output.contains("R "));
     assert!(output.contains("U' "));
+}
+
+#[test]
+fn test_5x5_scramble_default_length() {
+    let scramble = Scramble::generate(Cube::FiveByFive, None);
+    assert_eq!(scramble.moves.len(), 60);
+}
+
+#[test]
+fn test_5x5_scramble_custom_length() {
+    let scramble = Scramble::generate(Cube::FiveByFive, Some(50));
+    assert_eq!(scramble.moves.len(), 50);
+}
+
+#[test]
+fn test_5x5_has_wide_moves() {
+    let scramble = Scramble::generate(Cube::FiveByFive, Some(100));
+    let has_wide = scramble
+        .moves
+        .iter()
+        .any(|m| matches!(m.move_width, MoveWidth::Wide));
+    
+    // 5x5 should have wide moves
+    assert!(has_wide);
+    
 }

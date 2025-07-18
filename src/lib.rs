@@ -15,6 +15,7 @@ impl Scramble {
         match cube {
             Cube::ThreeByThree => generate_3x3(length),
             Cube::FourByFour => generate_4x4(length),
+            Cube::FiveByFive => generate_5x5(length),
             _ => unimplemented!(),
         }
     }
@@ -47,7 +48,40 @@ fn generate_4x4(length: Option<usize>) -> Scramble {
     for _ in 0..length.unwrap_or(40) {
         let move_face: MoveFace = rng.gen();
         let move_type: MoveType = rng.gen();
-        let move_width: MoveWidth = rng.gen();
+        
+        // 4x4 uses a mix of single and wide moves, no slice moves
+        let move_width = match rng.gen_range(0..10) {
+            0..=7 => MoveWidth::Single,  // 80% single moves
+            _ => MoveWidth::Wide,         // 20% wide moves
+        };
+        
+        let move_ = Move {
+            move_face,
+            move_type,
+            move_width,
+        };
+
+        scramble_moves.push(move_);
+    }
+    Scramble {
+        moves: scramble_moves,
+    }
+}
+
+fn generate_5x5(length: Option<usize>) -> Scramble {
+    let mut scramble_moves = Vec::new();
+    let mut rng = thread_rng();
+
+    for _ in 0..length.unwrap_or(60) {
+        let move_face: MoveFace = rng.gen();
+        let move_type: MoveType = rng.gen();
+        
+        // 5x5 has different move width distribution
+        let move_width = match rng.gen_range(0..10) {
+            0..=5 => MoveWidth::Single,  // 60% single moves (R, U, etc.)
+            _ => MoveWidth::Wide,         // 40% wide moves (Rw, Uw, etc.)
+        };
+        
         let move_ = Move {
             move_face,
             move_type,
@@ -77,14 +111,8 @@ pub struct Move {
 impl fmt::Display for Move {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.move_width {
-            MoveWidth::Slice => write!(
-                f,
-                "{}{}{}",
-                self.move_face.to_string().to_lowercase(),
-                self.move_width,
-                self.move_type
-            ),
-            _ => write!(f, "{}{}{}", self.move_face, self.move_width, self.move_type),
+            MoveWidth::Single => write!(f, "{}{}", self.move_face, self.move_type),
+            MoveWidth::Wide => write!(f, "{}w{}", self.move_face, self.move_type),
         }
     }
 }
@@ -153,15 +181,13 @@ impl Distribution<MoveType> for Standard {
 pub enum MoveWidth {
     Single,
     Wide,
-    Slice,
 }
 
 impl Distribution<MoveWidth> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> MoveWidth {
         match rng.gen_range(0..10) {
-            0..=6 => MoveWidth::Single,
-            7..=8 => MoveWidth::Wide,
-            _ => MoveWidth::Slice,
+            0..=7 => MoveWidth::Single,
+            _ => MoveWidth::Wide,
         }
     }
 }
@@ -171,7 +197,6 @@ impl fmt::Display for MoveWidth {
         match self {
             MoveWidth::Single => write!(f, ""),
             MoveWidth::Wide => write!(f, "w"),
-            MoveWidth::Slice => write!(f, ""),
         }
     }
 }
