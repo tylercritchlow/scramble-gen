@@ -2,6 +2,8 @@
 name = "scramble-gen"
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
+description = "Library with accompanying cli utility that generates practice scrambles for use in a future cube timer."
 
 [dependencies]
 rand = { version = "0.8", features = ["std"] }
