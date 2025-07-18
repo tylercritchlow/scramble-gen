@@ -1,3 +1,4 @@
+use std::cmp::PartialEq;
 use rand::{
     distributions::{Distribution, Standard},
     thread_rng, Rng,
@@ -10,24 +11,53 @@ pub struct Scramble {
 }
 
 impl Scramble {
-    pub fn generate(length: usize) -> Scramble {
-        let mut scramble_moves = Vec::new();
-        let mut rng = thread_rng();
-
-        for i in 0..length {
-            let move_face: MoveFace = rng.gen();
-            let move_type: MoveType = rng.gen();
-            let move_ = Move {
-                move_face,
-                move_type,
-            };
-
-            scramble_moves.push(move_);
+    pub fn generate(cube: Cube, length: Option<usize>) -> Scramble {
+        match cube { 
+            Cube::ThreeByThree => { generate_3x3(length) }
+            Cube::FourByFour => { generate_4x4(length) }
+            _ => unimplemented!(),
         }
+    }
+}
 
-        Scramble {
-            moves: scramble_moves,
-        }
+fn generate_3x3(length: Option<usize>) -> Scramble {
+    let mut scramble_moves = Vec::new();
+    let mut rng = thread_rng();
+
+    for i in 0..length.unwrap_or(20) {
+        let move_face: MoveFace = rng.gen();
+        let move_type: MoveType = rng.gen();
+        let move_ = Move {
+            move_face,
+            move_type,
+            move_width: MoveWidth::Single,
+        };
+
+        scramble_moves.push(move_);
+    }
+    Scramble {
+        moves: scramble_moves,
+    }
+}
+
+fn generate_4x4(length: Option<usize>) -> Scramble {
+    let mut scramble_moves = Vec::new();
+    let mut rng = thread_rng();
+
+    for i in 0..length.unwrap_or(40) {
+        let move_face: MoveFace = rng.gen();
+        let move_type: MoveType = rng.gen();
+        let move_width: MoveWidth = rng.gen();
+        let move_ = Move {
+            move_face,
+            move_type,
+            move_width,
+        };
+
+        scramble_moves.push(move_);
+    }
+    Scramble {
+        moves: scramble_moves,
     }
 }
 
@@ -42,10 +72,14 @@ impl fmt::Display for Scramble {
 pub struct Move {
     pub move_face: MoveFace,
     pub move_type: MoveType,
+    pub move_width: MoveWidth,
 }
 impl fmt::Display for Move {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}{}", self.move_face, self.move_type)
+        match self.move_width {
+            MoveWidth::Slice => write!(f, "{}{}{}", self.move_face.to_string().to_lowercase(), self.move_width, self.move_type),
+            _ => write!(f, "{}{}{}", self.move_face, self.move_width, self.move_type),
+        }
     }
 }
 #[derive(Debug)]
@@ -107,4 +141,41 @@ impl Distribution<MoveType> for Standard {
             _ => MoveType::Prime,
         }
     }
+}
+
+#[derive(Debug)]
+pub enum MoveWidth {
+    Single,
+    Wide,
+    Slice,
+}
+
+impl Distribution<MoveWidth> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> MoveWidth {
+        match rng.gen_range(0..10) {
+            0..=6 => MoveWidth::Single,
+            7..=8 => MoveWidth::Wide,
+            _ => MoveWidth::Slice,
+        }
+    }
+}
+
+impl fmt::Display for MoveWidth {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            MoveWidth::Single => write!(f, ""),
+            MoveWidth::Wide => write!(f, "w"),
+            MoveWidth::Slice => write!(f, ""),
+        }
+    }
+}
+
+#[derive(Eq, PartialEq, Debug, Copy, Clone)]
+pub enum Cube {
+    TwoByTwo,
+    ThreeByThree,
+    FourByFour,
+    FiveByFive,
+    SixBySix,
+    SevenBySeven,
 }
