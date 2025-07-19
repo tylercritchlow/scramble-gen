@@ -60,6 +60,6 @@ fn main() {
 
     for _ in 0..amount {
         let scramble = Scramble::generate(cube_type, length);
-        println!("{}", scramble);
+        println!("{scramble}");
     }
 }

@@ -51,14 +51,14 @@ fn test_move_display() {
         move_type: MoveType::Prime,
         move_width: MoveWidth::Single,
     };
-    assert_eq!(format!("{}", move_), "R'");
+    assert_eq!(format!("{move_}"), "R'");
 
     let wide_move = Move {
         move_face: MoveFace::Right,
         move_type: MoveType::Double,
         move_width: MoveWidth::Wide,
     };
-    assert_eq!(format!("{}", wide_move), "Rw2");
+    assert_eq!(format!("{wide_move}"), "Rw2");
 }
 
 #[test]
@@ -93,7 +93,7 @@ fn test_scramble_display() {
         },
     ];
     let scramble = Scramble { moves };
-    let output = format!("{}", scramble);
+    let output = format!("{scramble}");
     assert!(output.contains("R "));
     assert!(output.contains("U' "));
 }
@@ -165,5 +165,5 @@ fn test_three_wide_display() {
         move_type: MoveType::Prime,
         move_width: MoveWidth::ThreeWide,
     };
-    assert_eq!(format!("{}", three_wide_move), "3R'");
+    assert_eq!(format!("{three_wide_move}"), "3R'");
 }

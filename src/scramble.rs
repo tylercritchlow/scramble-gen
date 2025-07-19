@@ -22,8 +22,9 @@ impl Scramble {
 
 impl fmt::Display for Scramble {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        Ok(for i in 0..self.moves.len() {
+        for i in 0..self.moves.len() {
             write!(f, "{} ", self.moves[i])?;
-        })
+        }
+        Ok(())
     }
 }
