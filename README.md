@@ -3,6 +3,17 @@
 Library with accompanying cli utility that generates practice scrambles for use in a future cube timer.
 
 ## Usage
+### Library
+```shell
+cargo add scramble-gen
+```
+refer to docs at https://docs.rs/scramble-gen/latest/scramble_gen/
+
+### CLI Utility
+
+```shell
+cargo install scramble-gen
+```
 
 ```
 scramble-gen - Generate practice scrambles for Rubik's cubes
