@@ -38,7 +38,7 @@ fn test_no_redundant_moves_3x3() {
     for i in 0..1000 {
         let scramble = Scramble::generate(Cube::ThreeByThree, Some(25));
         if let Err(e) = verify_no_redundant_moves(&scramble) {
-            panic!("3x3 scramble {} failed: {}", i, e);
+            panic!("3x3 scramble {i} failed: {e}");
         }
     }
 }
@@ -48,7 +48,7 @@ fn test_no_redundant_moves_4x4() {
     for i in 0..1000 {
         let scramble = Scramble::generate(Cube::FourByFour, Some(40));
         if let Err(e) = verify_no_redundant_moves(&scramble) {
-            panic!("4x4 scramble {} failed: {}", i, e);
+            panic!("4x4 scramble {i} failed: {e}");
         }
     }
 }
@@ -58,7 +58,7 @@ fn test_no_redundant_moves_5x5() {
     for i in 0..1000 {
         let scramble = Scramble::generate(Cube::FiveByFive, Some(60));
         if let Err(e) = verify_no_redundant_moves(&scramble) {
-            panic!("5x5 scramble {} failed: {}", i, e);
+            panic!("5x5 scramble {i} failed: {e}");
         }
     }
 }
@@ -68,7 +68,7 @@ fn test_no_redundant_moves_6x6() {
     for i in 0..1000 {
         let scramble = Scramble::generate(Cube::SixBySix, Some(80));
         if let Err(e) = verify_no_redundant_moves(&scramble) {
-            panic!("6x6 scramble {} failed: {}", i, e);
+            panic!("6x6 scramble {i} failed: {e}");
         }
     }
 }
@@ -78,7 +78,7 @@ fn test_no_redundant_moves_7x7() {
     for i in 0..1000 {
         let scramble = Scramble::generate(Cube::SevenBySeven, Some(100));
         if let Err(e) = verify_no_redundant_moves(&scramble) {
-            panic!("7x7 scramble {} failed: {}", i, e);
+            panic!("7x7 scramble {i} failed: {e}");
         }
     }
 }
