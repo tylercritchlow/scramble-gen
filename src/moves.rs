@@ -44,6 +44,20 @@ impl fmt::Display for MoveFace {
     }
 }
 
+impl MoveFace {
+    pub fn same_axis(&self, other: &MoveFace) -> bool {
+        matches!(
+            (self, other),
+            (MoveFace::Right, MoveFace::Left)
+                | (MoveFace::Left, MoveFace::Right)
+                | (MoveFace::Up, MoveFace::Down)
+                | (MoveFace::Down, MoveFace::Up)
+                | (MoveFace::Front, MoveFace::Back)
+                | (MoveFace::Back, MoveFace::Front)
+        )
+    }
+}
+
 impl Distribution<MoveFace> for StandardUniform {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> MoveFace {
         match rng.random_range(0..6) {

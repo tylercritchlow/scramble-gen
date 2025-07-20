@@ -29,6 +29,23 @@ pub fn combine_moves(first: &Move, second: &Move) -> Option<Move> {
     })
 }
 
+fn would_create_parallel_conflict(moves: &[Move], new_move: &Move) -> bool {
+    if moves.len() < 2 {
+        return false;
+    }
+
+    let last_move = &moves[moves.len() - 1];
+    let second_last = &moves[moves.len() - 2];
+
+    if second_last.move_face == new_move.move_face
+        && second_last.move_face.same_axis(&last_move.move_face)
+    {
+        return true;
+    }
+
+    false
+}
+
 pub fn generate_validated_scramble<R: Rng>(
     rng: &mut R,
     length: usize,
@@ -47,20 +64,23 @@ pub fn generate_validated_scramble<R: Rng>(
             move_width,
         };
 
-        if let Some(last_move) = scramble_moves.last() {
-            if can_combine(last_move, &new_move) {
-                if let Some(combined) = combine_moves(last_move, &new_move) {
-                    scramble_moves.pop();
-                    scramble_moves.push(combined);
-                } else {
-                    scramble_moves.pop();
-                }
+        if let Some(last_move) = scramble_moves.last()
+            && can_combine(last_move, &new_move)
+        {
+            if let Some(combined) = combine_moves(last_move, &new_move) {
+                scramble_moves.pop();
+                scramble_moves.push(combined);
             } else {
-                scramble_moves.push(new_move);
+                scramble_moves.pop();
             }
-        } else {
-            scramble_moves.push(new_move);
+            continue;
         }
+
+        if would_create_parallel_conflict(&scramble_moves, &new_move) {
+            continue;
+        }
+
+        scramble_moves.push(new_move);
     }
 
     scramble_moves
