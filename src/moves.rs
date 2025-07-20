@@ -4,7 +4,7 @@ use rand::{
 };
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Move {
     pub move_face: MoveFace,
     pub move_type: MoveType,
@@ -21,7 +21,7 @@ impl fmt::Display for Move {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum MoveFace {
     Left,
     Right,
@@ -57,7 +57,7 @@ impl Distribution<MoveFace> for StandardUniform {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum MoveType {
     Double,
     Prime,
@@ -84,7 +84,7 @@ impl Distribution<MoveType> for StandardUniform {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum MoveWidth {
     Single,
     Wide,
